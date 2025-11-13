@@ -3,8 +3,8 @@
 [简体中文](README.zh-CN.md)
 
 ## Introduction
-_**Blacklight: Evolution**_ is a Minecraft mod which is intended to replicate 
-the various abilities and effects from the video game _**PROTOTYPE**_.
+**Blacklight: Evolution** is a Minecraft mod which is intended to replicate 
+the various abilities and effects of Prototype from the video game _**PROTOTYPE**_.
 
 This mod is on a very early stage of development, and many features are yet to be implemented,
 and there may be bugs and performance issues.
