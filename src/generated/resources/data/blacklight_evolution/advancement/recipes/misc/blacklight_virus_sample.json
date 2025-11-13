@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_blacklight_virus_sample": {
+      "conditions": {
+        "items": [
+          {
+            "items": "blacklight_evolution:blacklight_virus_sample"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "blacklight_evolution:blacklight_virus_sample"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_blacklight_virus_sample"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "blacklight_evolution:blacklight_virus_sample"
+    ]
+  }
+}
