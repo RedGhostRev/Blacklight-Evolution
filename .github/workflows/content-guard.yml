@@ -1,0 +1,54 @@
+name: Content Guard
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Collect changed files
+        id: diff
+        run: |
+          git fetch origin "${{ github.base_ref }}" --depth=1 || true
+          git diff --name-only "origin/${{ github.base_ref }}"...HEAD > changed.txt || true
+          if [ ! -s changed.txt ]; then
+            # fallback（首次提交等极端情况）
+            git diff --name-only HEAD^ HEAD > changed.txt || true
+          fi
+          echo "Changed files:"; cat changed.txt || true
+
+      - name: Block forbidden paths
+        run: |
+          set -e
+          if [ ! -s changed.txt ]; then exit 0; fi
+          BAD=0
+          while read -r f; do
+            case "$f" in
+              build/*|out/*|dist/*|.gradle/*|.idea/*|run/*|secrets/*|*.key|*.pem|*.jks|id_rsa|.env|*.p12)
+                echo "::error file=$f::Blocked by policy"; BAD=1;;
+            esac
+          done < changed.txt
+          exit $BAD
+
+      - name: Block large files (>10MB)
+        run: |
+          set -e
+          if [ ! -s changed.txt ]; then exit 0; fi
+          MAX=$((10*1024*1024))
+          BAD=0
+          while read -r f; do
+            [ -f "$f" ] || continue
+            size=$(stat -c%s "$f" 2>/dev/null || wc -c < "$f")
+            if [ "$size" -gt "$MAX" ]; then
+              echo "::error file=$f::File too large ($size bytes)"; BAD=1
+            fi
+          done < changed.txt
+          exit $BAD
